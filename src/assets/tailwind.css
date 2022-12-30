@@ -3,3 +3,8 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.chat_receiver {
+  margin-left: auto;
+  background-color: #dcf8c6;
+}

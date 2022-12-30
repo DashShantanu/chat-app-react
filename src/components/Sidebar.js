@@ -46,8 +46,8 @@ const Sidebar = () => {
             </div>
 
             {/* sidebar chats */}
-            <div className=' basis-full bg-white overflow-scroll'>
-                <SidebarChat />
+            <div className=' basis-full bg-white overflow-y-scroll'>
+                <SidebarChat addNewChat />
                 <SidebarChat />
                 <SidebarChat />
                 <SidebarChat />
