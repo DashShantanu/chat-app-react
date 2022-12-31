@@ -525,6 +525,10 @@ video {
   margin-bottom: 1.75rem;
 }
 
+.ml-auto {
+  margin-left: auto;
+}
+
 .ml-\[10px\] {
   margin-left: 10px;
 }
@@ -691,6 +695,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#dcf8c6\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 248 198 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#f6f6f6\] {
   --tw-bg-opacity: 1;
   background-color: rgb(246 246 246 / var(--tw-bg-opacity));
@@ -764,11 +773,6 @@ video {
   --tw-shadow: -1px 4px 20px -6px rgba(0,0,0,0.7);
   --tw-shadow-colored: -1px 4px 20px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.chat_receiver {
-  margin-left: auto;
-  background-color: #dcf8c6;
 }
 
 .hover\:bg-\[\#ebebeb\]:hover {

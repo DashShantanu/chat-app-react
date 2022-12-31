@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
+import db from '../firebase';
+import 'firebase/compat/firestore';
 
-const SidebarChat = ({ addNewChat }) => {
+const SidebarChat = ({ id, name, addNewChat }) => {
     const [seed, setSeed] = useState('');
 
     useEffect(() => {
@@ -9,10 +11,13 @@ const SidebarChat = ({ addNewChat }) => {
     }, []);
 
     const createChat = () => {
-        const roomName = prompt('Please enter name for chat');
+        const roomName = prompt('Please enter name for chat room');
 
         if (roomName) {
-            // do some clever database stuff...
+            // Add new room to rooms collection in db
+            db.collection('rooms').add({
+                name: roomName
+            });
         };
     };
 
@@ -26,7 +31,7 @@ const SidebarChat = ({ addNewChat }) => {
             <div className=' ml-[15px]'>
                 {/* Name/Room */}
                 <h2 className=' text-base leading-none mb-2'>
-                    Room name
+                    {name}
                 </h2>
                 {/* Last message */}
                 <p className=''>

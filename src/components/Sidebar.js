@@ -1,4 +1,7 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
+import db from '../firebase';
+import 'firebase/compat/firestore';
 
 import SidebarChat from './SidebarChat';
 
@@ -10,6 +13,20 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
 const Sidebar = () => {
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        // Get all rooms from db using current snapshot and put into rooms state
+        db.collection('rooms').onSnapshot((snapshot) => {
+            setRooms(
+                snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data(),
+                }))
+            );
+        });
+    });
+
     return (
         <div className='flex flex-col basis-1/3'>
             {/* sidebar header */}
@@ -48,9 +65,13 @@ const Sidebar = () => {
             {/* sidebar chats */}
             <div className=' basis-full bg-white overflow-y-scroll'>
                 <SidebarChat addNewChat />
-                <SidebarChat />
-                <SidebarChat />
-                <SidebarChat />
+
+                {
+                    // Loop through all rooms and render SidebarChat component
+                    rooms.map((room) => (
+                        <SidebarChat key={room.id} id={room.id} name={room.data.name} />
+                    ))
+                }
             </div>
         </div>
     );
