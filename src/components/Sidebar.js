@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useStateValue } from '../StateProvider';
 import db from '../firebase';
 import 'firebase/compat/firestore';
 
@@ -14,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 const Sidebar = () => {
     const [rooms, setRooms] = useState([]);
+    const [{ user }] = useStateValue();
 
     useEffect(() => {
         // Get all rooms from db using current snapshot and put into rooms state
@@ -38,7 +40,7 @@ const Sidebar = () => {
             <div
                 className='flex justify-between p-5 border-r border-solid border-[lightgray]'
             >
-                <Avatar />
+                <Avatar src={user?.photoURL} />
 
                 {/* Sidebar header right */}
                 <div className='flex items-center justify-between min-w-[10px]'>
