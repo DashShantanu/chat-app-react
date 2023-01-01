@@ -25,6 +25,11 @@ const Sidebar = () => {
                 }))
             );
         });
+
+        // Cleanup function to detach listener when component unmounts
+        // return () => {
+        //     unsubscribe();
+        // };
     });
 
     return (

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import db from '../firebase';
+import 'firebase/compat/firestore';
 
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -7,12 +10,23 @@ import MoreVert from '@mui/icons-material/MoreVert';
 import { AttachFile, InsertEmoticon, Mic } from '@mui/icons-material';
 
 const Chat = () => {
-    const { input, setInput } = useState("");
+    const [input, setInput] = useState("");
     const [seed, setSeed] = useState("");
+    const { roomId } = useParams();
+    const [roomName, setRoomName] = useState("");
+
+    useEffect(() => {
+        // Whenever roomId changes, get room name from db
+        if (roomId) {
+            db.collection("rooms")
+                .doc(roomId)
+                .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
+        }
+    }, [roomId]);
 
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000));
-    }, []);
+    }, [roomId]);
 
     const sendMessage = (e) => {
         e.preventDefault();
@@ -28,8 +42,16 @@ const Chat = () => {
 
                 {/* Chat header info */}
                 <div className=' flex-1 pl-5'>
-                    <h3 className=' mb-[3px] font-medium'>Room name</h3>
-                    <p className=' text-[gray]'>Last seen at...</p>
+                    <h3
+                        className=' mb-[3px] font-medium'
+                    >
+                        {roomName}
+                    </h3>
+                    <p
+                        className=' text-[gray]'
+                    >
+                        Last seen at...
+                    </p>
                 </div>
 
                 {/* Chat header Right*/}

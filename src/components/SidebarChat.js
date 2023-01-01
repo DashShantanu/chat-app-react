@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import db from '../firebase';
 import 'firebase/compat/firestore';
@@ -22,23 +23,26 @@ const SidebarChat = ({ id, name, addNewChat }) => {
     };
 
     return !addNewChat ? (
-        <div
-            className='flex p-5 cursor-pointer border-b-[1px] border-solid border-[#e6e6e6] hover:bg-[#ebebeb]'
-        >
-            <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
+        // Wrapping Link around div to make entire sidebar-chat clickable
+        <Link to={`/rooms/${id}`}>
+            <div
+                className='flex p-5 cursor-pointer border-b-[1px] border-solid border-[#e6e6e6] hover:bg-[#ebebeb]'
+            >
+                <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
 
-            {/* Chat info */}
-            <div className=' ml-[15px]'>
-                {/* Name/Room */}
-                <h2 className=' text-base leading-none mb-2'>
-                    {name}
-                </h2>
-                {/* Last message */}
-                <p className=''>
-                    Last message
-                </p>
+                {/* Chat info */}
+                <div className=' ml-[15px]'>
+                    {/* Name/Room */}
+                    <h2 className=' text-base leading-none mb-2'>
+                        {name}
+                    </h2>
+                    {/* Last message */}
+                    <p className=''>
+                        Last message
+                    </p>
+                </div>
             </div>
-        </div>
+        </Link>
     ) : (
         <div
             onClick={createChat}
