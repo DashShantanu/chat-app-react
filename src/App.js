@@ -33,6 +33,7 @@ const App = () => {
 
                   <Route path="/rooms/:roomId" element={<Chat />}>
                   </Route>
+                  <Route path="/" />
 
                 </Routes>
 

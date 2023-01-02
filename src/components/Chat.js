@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import db from '../firebase';
 import 'firebase/compat/firestore';
+import { serverTimestamp } from '@firebase/firestore'
+import { useStateValue } from '../StateProvider';
+
 
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -14,6 +17,8 @@ const Chat = () => {
     const [seed, setSeed] = useState("");
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [{ user }] = useStateValue();
 
     useEffect(() => {
         // Whenever roomId changes, get room name from db
@@ -22,6 +27,18 @@ const Chat = () => {
                 .doc(roomId)
                 .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
         }
+
+        // Get all messages from db using current snapshot and put into messages state
+        db.collection("rooms")
+            .doc(roomId)
+            .collection("messages")
+            .orderBy("timestamp", "asc")
+            .onSnapshot((snapshot) =>
+                setMessages(snapshot.docs.map((doc) => doc.data()))
+            );
+
+        setInput("");
+
     }, [roomId]);
 
     useEffect(() => {
@@ -30,6 +47,16 @@ const Chat = () => {
 
     const sendMessage = (e) => {
         e.preventDefault();
+
+        db.collection("rooms")
+            .doc(roomId)
+            .collection("messages")
+            .add({
+                message: input,
+                name: user.displayName,
+                timestamp: serverTimestamp(),
+            });
+
         setInput("");
     };
 
@@ -50,7 +77,8 @@ const Chat = () => {
                     <p
                         className=' text-[gray]'
                     >
-                        Last seen at...
+                        Last seen on{" "}
+                        {new Date(messages[messages.length - 1]?.timestamp?.toDate()).toUTCString()}
                     </p>
                 </div>
 
@@ -70,17 +98,21 @@ const Chat = () => {
 
             {/* Chat body */}
             <div className=' flex-1 bg-[url("http://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")] bg-repeat bg-center p-7 overflow-y-scroll'>
-                <p
-                    className={` relative text-base p-[10px] bg-white rounded-[10px] w-fit mb-7 ${true && ' ml-auto bg-[#dcf8c6]'}`}
-                >
-                    <span className=' absolute top-[-18px] font-extrabold text-xs'>
-                        Dheeraj Soni
-                    </span>
-                    Hey Guys
-                    <span className=" ml-[10px] text-xxs">
-                        3:52pm
-                    </span>
-                </p>
+                {messages.map((message) => (
+                    <p
+                        className={` relative text-base p-[10px] bg-white rounded-[10px] w-fit mb-7 
+                        ${message.name === user.displayName && ' ml-auto bg-[#dcf8c6]'}`}
+                        key={message.timestamp}
+                    >
+                        <span className=' absolute top-[-18px] font-extrabold text-xs'>
+                            {message.name}
+                        </span>
+                        {message.message}
+                        <span className=" ml-[10px] text-xxs text-[gray]">
+                            {new Date(message.timestamp?.toDate()).toUTCString()}
+                        </span>
+                    </p>
+                ))}
             </div>
 
             {/* Chat footer */}
@@ -90,13 +122,13 @@ const Chat = () => {
                 </IconButton>
                 <form className=' flex flex-1'>
                     <input
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
                         type='text'
                         placeholder='Type a message'
                         className=' flex-1 rounded-[30px] p-[10px] border-none'
                     />
                     <button
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
                         onClick={sendMessage}
                         type='submit'
                         className=' hidden'
@@ -108,7 +140,7 @@ const Chat = () => {
                     <Mic />
                 </IconButton>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -4,8 +4,23 @@ import Avatar from '@mui/material/Avatar';
 import db from '../firebase';
 import 'firebase/compat/firestore';
 
+
 const SidebarChat = ({ id, name, addNewChat }) => {
     const [seed, setSeed] = useState('');
+    const [messages, setMessages] = useState('');
+
+    useEffect(() => {
+        // Get messages from db in descending order of timestamp and put into messages state
+        if (id) {
+            db.collection('rooms')
+                .doc(id)
+                .collection('messages')
+                .orderBy('timestamp', 'desc')
+                .onSnapshot(snapshot => (
+                    setMessages(snapshot.docs.map((doc) => doc.data()))
+                ));
+        }
+    }, [id]);
 
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000));
@@ -31,14 +46,15 @@ const SidebarChat = ({ id, name, addNewChat }) => {
                 <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
 
                 {/* Chat info */}
-                <div className=' ml-[15px]'>
+                <div className=' ml-[15px] no-underline text-black'>
                     {/* Name/Room */}
-                    <h2 className=' text-base leading-none mb-2'>
+                    <h2 className=' text-base leading-none mb-2 font-medium'>
                         {name}
                     </h2>
                     {/* Last message */}
                     <p className=''>
-                        Last message
+                        {/* If messages exist, show last message, else show nothing */}
+                        {messages[0]?.message}
                     </p>
                 </div>
             </div>
